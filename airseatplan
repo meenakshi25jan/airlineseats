@@ -1,0 +1,154 @@
+seatfilled = 0
+seattotal = 30
+seatrow = 0
+tseatfilled = -1
+
+def buildconstructseatmatrix(airseatsMatrix):
+    airseats = []
+    for i in airseatsMatrix:
+        seatrows = i[1]
+        cols = i[0]
+        arr = []
+        for i in range(seatrows):
+            arr.append([-1]*cols)
+        airseats.append(arr)
+    return airseats
+
+
+                
+def aisleairseatsfill():
+    # seatfilled = 0
+    global seatfilled
+    seatrow = 0
+    tseatfilled = -1
+    while seatfilled < seattotal and seatfilled != tseatfilled:
+        tseatfilled = seatfilled
+        for i in range(length):
+            if airseatsMatrix[i][1] > seatrow:
+                if i == 0 and airseatsMatrix[i][0] > 1:
+                    seatfilled += 1
+                    aisleCol = airseatsMatrix[i][0] - 1
+                    airseats[i][seatrow][aisleCol] = seatfilled
+                    if seatfilled >= seattotal:
+                        break
+                elif i == length - 1 and airseatsMatrix[i][0] > 1:
+                    seatfilled += 1
+                    aisleCol = 0
+                    airseats[i][seatrow][aisleCol] = seatfilled
+                    if seatfilled >= seattotal:
+                        break
+                else:
+                    seatfilled += 1
+                    aisleCol = 0
+                    airseats[i][seatrow][aisleCol] = seatfilled
+                    if seatfilled >= seattotal:
+                        break
+                    if airseatsMatrix[i][0] > 1:
+                        seatfilled += 1
+                        aisleCol = airseatsMatrix[i][0] - 1
+                        airseats[i][seatrow][aisleCol] = seatfilled
+                        if seatfilled >= seattotal:
+                            break
+        seatrow += 1
+
+
+
+def midairseatsfill():
+    seatrow = 0
+    tseatfilled = 0
+    global seatfilled
+    while seatfilled < seattotal and seatfilled != tseatfilled:
+        tseatfilled = seatfilled
+        for i in range(length):
+            if airseatsMatrix[i][1] > seatrow:
+                if airseatsMatrix[i][0] > 2:
+                    for col in range(1, airseatsMatrix[i][0] - 1):
+                        seatfilled += 1
+                        airseats[i][seatrow][col] = seatfilled
+                        if seatfilled >= seattotal:
+                            break
+        seatrow += 1
+
+def windowairseatsfill():
+    seatrow = 0
+    global seatfilled
+    global seattotal
+    tseatfilled = 0
+    while seatfilled < seattotal and seatfilled != tseatfilled:
+        tseatfilled = seatfilled
+        if airseatsMatrix[0][1] > seatrow:
+            seatfilled += 1
+            window = 0
+            airseats[0][seatrow][window] = seatfilled
+            if seatfilled >= seattotal:
+                break
+        if airseatsMatrix[length-1][1] > seatrow:
+            seatfilled += 1
+            window = airseatsGrid[length-1][0] - 1
+            airseats[length-1][seatrow][window] = seatfilled
+            if seatfilled >= seattotal:
+                break
+        seatrow += 1
+
+def Displayairseats(airseats):
+    buildblksize = len(str(seattotal))
+    seatrows = [x[1] for x in airseatsMatrix]
+    cols = [x[0] for x in airseatsMatrix]
+    maximum = max(seatrows)
+    top = True
+    for i in range(maximum):
+        airseatrowlist = []
+        airseatrowlistl = []
+        for j in range(length):
+            seatrow = ' '
+            seatrowl = ' '
+            if len(airseats[j]) <= i:
+                for k in range(cols[j]):
+                    seatrow += ' '*buildblksize
+                    seatrowl += ' '*buildblksize
+                    seatrow += ' '
+                    seatrowl += ' '
+            else:
+                seatrow = '|'
+                seatrowl = '*'
+                for k in airseats[j][i]:
+                    if k == -1:
+                        seatrow += ' '*buildblksize
+                        seatrowl += '-'*buildblksize
+                        seatrow += '|'
+                        seatrowl += '*'
+                    else:
+                        seatrow += str(k)+(' '*(buildblksize - len(str(k))))
+                        seatrowl += '-'*buildblksize
+                        seatrow += '|'
+                        seatrowl += '*'
+            
+            airseatrowlist.append(seatrow)
+            airseatrowlistl.append(seatrowl)
+        if top:
+            print('    '.join(airseatrowlistl))
+            top = False
+        print('    '.join(airseatrowlist))
+        print('    '.join(airseatrowlistl))
+
+
+airseatsMatrix = [[5,4], [4,5], [5,7], [4,1], [5,3], [3,5]]
+airseats = buildconstructseatmatrix(airseatsMatrix)
+# display airseats
+size = len(airseatsMatrix)
+
+
+# Aisle
+aisleairseatsfill()
+
+# Window
+
+windowairseatsfill()
+
+# Center
+seatrow = 0
+tseatfilled = 0
+midairseatsfill()
+
+
+Displayairseats(airseats)
